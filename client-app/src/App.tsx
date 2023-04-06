@@ -19,7 +19,6 @@ function App() {
 
   useEffect(() => {
     axios.get("http://localhost:5000/api/activities/").then((res) => setActivities(res.data)).catch((err) => console.log(err))
-    console.log(acitivities)
   }, [])
 
   return (
