@@ -15,6 +15,7 @@ interface ActivityDashboardProps {
   closeForm: () => void;
   createOrEdit: (activity: Activity) => void;
   deleteActivity: (id: string) => void;
+  isSubmitting: boolean;
 }
 const ActivityDashboard: React.FC<ActivityDashboardProps> = (props) => {
   return (
@@ -25,6 +26,7 @@ const ActivityDashboard: React.FC<ActivityDashboardProps> = (props) => {
           selectActivity={props.selectActivity}
           closeForm={props.closeForm}
           deleteActivity={props.deleteActivity}
+          isSubmitting={props.isSubmitting}
         />
       </Grid.Column>
       <Grid.Column width={6}>
@@ -42,6 +44,7 @@ const ActivityDashboard: React.FC<ActivityDashboardProps> = (props) => {
             activity={props.selectedActivity}
             closeForm={props.closeForm}
             createOrEdit={props.createOrEdit}
+            isSubmitting={props.isSubmitting}
           />
         ) : null}
       </Grid.Column>
