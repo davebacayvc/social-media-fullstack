@@ -1,19 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form, Segment } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Activity } from "../../../app/models/activity";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { v4 as uuid } from "uuid";
 
-const ActivityForm: React.FC = (props) => {
+const ActivityForm: React.FC = () => {
   const { activityStore } = useStore();
   const {
-    selectedActivity,
-    closeForm,
     createActivity,
     updateActivity,
     loading,
+    loadActivity,
+    loadingInitial,
   } = activityStore;
 
-  const initialState = selectedActivity ?? {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [activity, setActivity] = useState<Activity>({
     id: "",
     title: "",
     category: "",
@@ -21,12 +28,25 @@ const ActivityForm: React.FC = (props) => {
     date: "",
     description: "",
     venue: "",
-  };
+  });
 
-  const [activity, setActivity] = useState(initialState);
+  useEffect(() => {
+    if (id) {
+      loadActivity(id).then((activity) => setActivity(activity!));
+    }
+  }, [id, loadActivity]);
 
   const handleSubmit = () => {
-    activity.id ? updateActivity(activity) : createActivity(activity);
+    if (!activity.id) {
+      activity.id = uuid();
+      createActivity(activity).then(() =>
+        navigate(`/activities/${activity.id}`)
+      );
+    } else {
+      updateActivity(activity).then(() =>
+        navigate(`/activities/${activity.id}`)
+      );
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +56,10 @@ const ActivityForm: React.FC = (props) => {
       [name]: value,
     });
   };
+
+  if (loadingInitial) {
+    return <LoadingComponent content="Loading activity ..." />;
+  }
 
   return (
     <Segment clearing>
@@ -86,10 +110,10 @@ const ActivityForm: React.FC = (props) => {
         />
         <Button
           floated="right"
-          positive
           type="button"
           content="Cancel"
-          onClick={() => closeForm()}
+          as={Link}
+          to="/activities"
         />
       </Form>
     </Segment>
