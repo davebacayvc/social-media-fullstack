@@ -1,28 +1,25 @@
 import React, { SyntheticEvent, useState } from "react";
-import { Activity } from "../../../app/models/activity";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
+import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
-interface ActivityListProps {
-  activities: Activity[];
-  selectActivity: (id: string) => void;
-  closeForm: () => void;
-  deleteActivity: (id: string) => void;
-  isSubmitting: boolean;
-}
-const ActivityList: React.FC<ActivityListProps> = (props) => {
+const ActivityList: React.FC = (props) => {
   const [target, setTarget] = useState("");
+  const { activityStore } = useStore();
+  const { activitiesByDate, deleteActivity, loading } = activityStore;
 
   const handleActivityDelete = (
     e: SyntheticEvent<HTMLButtonElement>,
     id: string
   ) => {
     setTarget(e.currentTarget.name);
-    props.deleteActivity(id);
+    deleteActivity(id);
   };
+
   return (
     <Segment>
       <Item.Group divided>
-        {props.activities.map((activity) => (
+        {activitiesByDate.map((activity) => (
           <Item key={activity.id}>
             <Item.Content>
               <Item.Header as="a">{activity.title}</Item.Header>
@@ -39,15 +36,15 @@ const ActivityList: React.FC<ActivityListProps> = (props) => {
                   content="View"
                   color="blue"
                   onClick={() => {
-                    props.selectActivity(activity.id);
-                    props.closeForm();
+                    activityStore.selectActivity(activity.id);
+                    activityStore.closeForm();
                   }}
                 />
                 <Button
                   name={activity.id}
                   floated="right"
                   content="Delete"
-                  loading={props.isSubmitting && target === activity.id}
+                  loading={loading && target === activity.id}
                   color="red"
                   onClick={(e) => {
                     handleActivityDelete(e, activity.id);
@@ -63,4 +60,4 @@ const ActivityList: React.FC<ActivityListProps> = (props) => {
   );
 };
 
-export default ActivityList;
+export default observer(ActivityList);

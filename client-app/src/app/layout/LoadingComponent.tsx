@@ -3,7 +3,7 @@ import { Dimmer, Loader } from "semantic-ui-react";
 
 interface LoadingProps {
   inverted?: boolean;
-  content: string;
+  content?: string;
 }
 const LoadingComponent: React.FC<LoadingProps> = (props) => {
   return (
@@ -11,6 +11,10 @@ const LoadingComponent: React.FC<LoadingProps> = (props) => {
       <Loader content={props.content} />
     </Dimmer>
   );
+};
+
+LoadingComponent.defaultProps = {
+  content: "Loading...",
 };
 
 export default LoadingComponent;
