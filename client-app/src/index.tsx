@@ -12,6 +12,7 @@ import "react-datepicker/dist/react-datepicker.css";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
 root.render(
   <StoreContext.Provider value={store}>
     <RouterProvider router={router} />
